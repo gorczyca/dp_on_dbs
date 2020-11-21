@@ -1,3 +1,16 @@
+# 21.11.2020 - Week 1
+1. Install dependencies with *conda*.
+    ```
+    conda env create --file environment.yml
+    ```
+
+2. Run by executing:
+    ```
+    -f input/A1-4000.tgf cestable --input-format tgf
+    ```
+
+***
+
 # dpdb
 Solve dynamic programming problems on tree decompositions using databases
 

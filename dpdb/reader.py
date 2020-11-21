@@ -45,7 +45,7 @@ class DimacsReader(Reader):
             if line.startswith("p ") or line.startswith("s "):
                 line = line.split()
                 self.problem_solution_type = line[0]
-                self.format = line[1] 
+                self.format = line[1]
                 self._problem_vars = line[2:]
                 return lineno+1
             elif not line or self.is_comment(line):
@@ -54,7 +54,28 @@ class DimacsReader(Reader):
                 logger.warning("Invalid content in preamble at line %d: %s", lineno, line)
         logger.error("No type found in DIMACS file!")
         sys.exit(1)
-        
+
+
+class TgfReader(Reader):
+    def __init__(self):
+        self.vertices = []
+        self.edges = []
+        self.adjacency_list = {}
+        self.num_vertices = None
+
+    def parse(self, string):
+        vertices_str, edges_str = string.split('#')
+        self.vertices = vertices_str.split()
+        self.num_vertices = len(self.vertices)
+        for edge_str in edges_str.strip().split('\n'):
+            _add_directed_edge(self.edges, self.adjacency_list, *edge_str.split())
+
+
+class ApxReader(Reader):
+    def parse(self, string):
+        raise NotImplementedError
+
+
 class CnfReader(DimacsReader):
     def __init__(self):
         super().__init__()
@@ -75,7 +96,7 @@ class CnfReader(DimacsReader):
         if self.format != "cnf":
             logger.error("Not a cnf file!")
             sys.exit(1)
-        
+
         maxvar = 0
         for lineno, line in enumerate(lines):
             if not line or self.is_comment(line):
@@ -139,7 +160,7 @@ class TdReader(DimacsReader):
         if self.format != "td":
             logger.error("Not a td file!")
             sys.exit(1)
-        
+
         for lineno, line in enumerate(lines):
             if not line:
                 continue

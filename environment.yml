@@ -1,0 +1,12 @@
+# run: conda env create --file environment.yml
+name: nesthdb
+channels:
+  - anaconda
+  - potassco
+dependencies:
+  - python=3.7
+  - clingo
+  - psycopg2
+  - pip
+  - pip:
+    - future-fstrings
