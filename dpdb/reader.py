@@ -1,5 +1,6 @@
 import logging
 import sys
+import re
 
 logger = logging.getLogger(__name__)
 
@@ -72,8 +73,25 @@ class TgfReader(Reader):
 
 
 class ApxReader(Reader):
+    def __init__(self):
+        self.vertices = []
+        self.edges = []
+        self.adjacency_list = {}
+        self.num_vertices = 0
+
+    def strip(self, line):
+        # Get the value inside of the brackets
+        return (re.search(r"\(([A-Za-z0-9_,]+)\)", line).group(1), line[:3])
+
     def parse(self, string):
-        raise NotImplementedError
+        for line in string.strip().split('\n'):
+            stripped, line_type = self.strip(line)
+            if line_type == "arg":
+                self.vertices.append(stripped)
+                self.num_vertices += 1
+            elif line_type == "att":
+                _add_directed_edge(self.edges, self.adjacency_list, *stripped.split(","))
+
 
 
 class CnfReader(DimacsReader):
