@@ -85,7 +85,7 @@ class Problem(object):
     def td_node_column_def(self, var):
         pass
 
-    def td_node_extra_columns(self):
+    def td_node_extra_columns(self, node):
         return []
 
     def candidate_extra_cols(self,node):
@@ -94,7 +94,7 @@ class Problem(object):
     def assignment_extra_cols(self,node):
         return []
 
-    def group_extra_cols(self,node):
+    def group_extra_cols(self, node):
         return []
 
     # if you overwrite this, make sure to alias the introduced value as "val"
@@ -195,7 +195,7 @@ class Problem(object):
         extra_group = self.group_extra_cols(node)
         if extra_group:
             if not node.stored_vertices:
-                q += " GROUP BY ";
+                q += " GROUP BY "
             else:
                 q += ", "
             q += "{}".format(",".join(extra_group))
@@ -282,7 +282,7 @@ class Problem(object):
 
             # create all columns and insert null if values are not used in parent
             # this only works in the current version of manual inserts without procedure calls in worker
-            db.create_table(f"td_node_{n.id}", [self.td_node_column_def(c) for c in n.vertices] + self.td_node_extra_columns())
+            db.create_table(f"td_node_{n.id}", [self.td_node_column_def(c) for c in n.vertices] + self.td_node_extra_columns(n))
             if self.candidate_store == "table":
                 db.create_table(f"td_node_{n.id}_candidate", [self.td_node_column_def(c) for c in n.vertices] + self.td_node_extra_columns())
                 candidate_view = self.candidates_select(n)

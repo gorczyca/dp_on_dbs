@@ -66,10 +66,10 @@ class TgfReader(Reader):
 
     def parse(self, string):
         vertices_str, edges_str = string.split('#')
-        self.vertices = vertices_str.split()
+        self.vertices = list(map(int, vertices_str.split()))
         self.num_vertices = len(self.vertices)
         for edge_str in edges_str.strip().split('\n'):
-            _add_directed_edge(self.edges, self.adjacency_list, *edge_str.split())
+            _add_directed_edge(self.edges, self.adjacency_list, *map(int, edge_str.split()))
 
 
 class ApxReader(Reader):
