@@ -1,3 +1,13 @@
+# 22.12.2020
+## CE Stable
+
+2. Run an example with the following parameters (simple examples 1-6), e.g.:
+    ```
+    -f input/stable_easy_examples/stable_easy_example2.tgf CEStable --input-format tgf
+    ```
+
+***
+
 # 21.11.2020 - Week 1
 1. Install dependencies with *conda*.
     ```
