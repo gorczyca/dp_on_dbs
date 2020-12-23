@@ -11,6 +11,36 @@ logger = logging.getLogger(__name__)
 
 PROBLEM_NAME = 'problem_cestable'
 
+class SymTab:
+    def __init__(self, offset=0):
+        self.__offset = offset
+        self.name2id = {}
+        self.id2name = {}
+
+    def clear(self):
+        self.name2id.clear()
+        self.id2name.clear()
+
+    @property
+    def n2id(self):
+        return self.name2id
+
+    @property
+    def id2n(self):
+        return self.id2name
+
+    def __getitem__(self, key):
+        try:
+            return self.name2id[key]
+        except KeyError:
+            val = self.__offset + len(self.name2id) + 1
+            self.name2id[key] = val
+            self.id2name[val] = key
+            return val
+
+    def get(self, key):
+        return self.__getitem__(key)
+
 
 def var2col_defeated(var):
     """Returns the name of the column indicating whether variable (argument) var is defeated.
@@ -28,6 +58,7 @@ class CEStable(Problem):
         self.input_format = input_format
         self.edges = None
         self.num_vertices = None
+        self.__nsymtab = SymTab()
 
     def prepare_input(self, fname):
         input_ = None
@@ -37,10 +68,13 @@ class CEStable(Problem):
             input_ = TgfReader.from_file(fname)
 
         # self.adjacency_list = input.adjacency_list
-        self.edges = input_.edges
+        if self.input_format == "apx":
+        	self.edges = self.encode_edge(input_.edges)
+        elif self.input_format == "tgf":
+        	self.edges = input_.edges
         self.num_vertices = input_.num_vertices
 
-        return input_.num_vertices, input_.edges
+        return input_.num_vertices, self.edges
 
     def td_node_column_def(self, var):
         """Returns name and datatype of the column for a variable (argument) var.
@@ -177,6 +211,12 @@ class CEStable(Problem):
         model_count = self.db.update(PROBLEM_NAME, ["model_count"], [sum_count], [f"ID = {self.id}"], "model_count")[0]
         logger.info("Problem has %d stable extensions", model_count)
 
+    def encode_edge(self, edges):
+        encoded = []
+        for edge in edges:
+            v1, v2 = edge
+            encoded.append((self.__nsymtab.get(v1), self.__nsymtab.get(v2)))
+        return encoded
 
 def var2cnt(node, var):
     if node.needs_introduce(var):
