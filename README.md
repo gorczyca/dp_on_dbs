@@ -5,7 +5,10 @@
     ```
     -f input/stable_easy_examples/stable_easy_example2.tgf CEStable --input-format tgf
     ```
-
+    Or:
+    ```
+    -f input/stable_easy_examples/stable_easy_example2.apx CEStable
+    ```
 ***
 
 # 21.11.2020 - Week 1
