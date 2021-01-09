@@ -138,7 +138,8 @@ class CEStable(Problem):
 
         if not node.needs_introduce(var):
             # if var is not introduced (has appeared before in some child), check if it hasn't already been defeated
-            conditions += ["{}.{}".format(var2tab_alias(node, var), var2col_defeated(var))]
+            conditions += ["{}.{}".format(node2tab_alias(child_node), var2col_defeated(var))
+                           for child_node in node.vertex_children(var)]
 
         # var is defeated either when some of its attackers is labeled in or it has already been defeated before
         # otherwise, is not defeated (FALSE)
