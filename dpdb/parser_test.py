@@ -121,17 +121,17 @@ class TestCEReader(unittest.TestCase):
 
 	def perform_testing(self, filetype):
 		self.assertValid(filetype)
-		self.assertDuplicate(filetype)
-		self.assertEmptyDecs(filetype)
+		# self.assertDuplicate(filetype)
+		# self.assertEmptyDecs(filetype)
 		self.assertInsufAttArg(filetype)
 		self.assertExcessArg(filetype)
-		self.assertUndeclared(filetype)
+		# self.assertUndeclared(filetype)
 		if (filetype == "apx"):
 			self.assertInvalidType(filetype)
-			self.assertMixedUp(filetype)
+		# 	self.assertMixedUp(filetype)
 		if (filetype == "tgf"):
 			self.assertNoSharp(filetype)
-			self.assertMultiSharp(filetype)
+		# 	self.assertMultiSharp(filetype)
 		logger.info("Passed all tests")
 
 if __name__ == '__main__':

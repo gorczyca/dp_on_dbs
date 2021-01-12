@@ -70,40 +70,15 @@ class TgfReader(Reader):
             logger.error("No # found")
             raise Exception("No # found")
         vertices_str, edges_str = string.split('#')
-        for vert_str in vertices_str.strip().split('\n'):
-            args = vert_str.split()
-            if args == []:
-                logger.error("Encounter empty declaration")
-                raise Exception("Encounter empty declaration")
-            else:
-                if len(args) > 1:
-                    logger.error("Excessive number of arguments in an argument declaration")
-                    raise Exception("Excessive number of arguments in an argument declaration")
-                if self.__nsymtab.get(args[0]) not in self.vertices:
-                    self.vertices.append(self.__nsymtab.get(args[0]))
-                else:
-                    logger.error("Duplicate argument declaration")
+        self.vertices = vertices_str.strip().split('\n')
         self.num_vertices = len(self.vertices)
-        for edge_str in edges_str.strip().split('\n'):
-            args = edge_str.split()
-            if args == []:
-                logger.error("Encounter empty declaration")
-                raise Exception("Encounter empty declaration")
-            elif (len(args) == 2):
-                if (self.__nsymtab.get(args[0]), self.__nsymtab.get(args[1])) not in self.edges:
-                    if (self.__nsymtab.get(args[0]) in self.vertices and self.__nsymtab.get(args[1]) in self.vertices):
-                        _add_directed_edge(self.edges, self.adjacency_list, self.__nsymtab.get(args[0]), self.__nsymtab.get(args[1]))
-                    else:
-                        raise Exception("Attack declaration involves undeclared argument(s)")
-                        logger.error("Attack declaration involves undeclared argument(s)")
-                else:
-                    logger.error("Duplicate attack declaration")
-            elif len(args) == 1:
-                logger.error("Insufficient number of arguments in an attack declaration")
-                raise Exception("Insufficient number of arguments in an attack declaration")
-            else:
-                logger.error("Excessive number of arguments in an attack declaration")
-                raise Exception("Excessive number of arguments in an attack declaration")
+        edge_str = edges_str.strip().split('\n')
+        for edge in edge_str:
+            args = edge.split()
+            if (len(args) != 2):
+                logger.error("Invalid number of arguments in an attack declaration")
+                raise Exception("Invalid number of arguments in an attack declaration")
+            _add_directed_edge(self.edges, self.adjacency_list, self.__nsymtab.get(args[0]), self.__nsymtab.get(args[1]))
 
 class ApxReader(Reader):
     def __init__(self):
@@ -113,60 +88,21 @@ class ApxReader(Reader):
         self.adjacency_list = {}
         self.num_vertices = 0
 
-    def strip(self, line):
-        # Get the value inside of the brackets
-        val = re.search(r"\(([A-Za-z0-9_,]+)\)", line)
-        if val:
-            return (val.group(1), line[:3])
-        else:
-            return (val, line[:3])
-
     def parse(self, string):
-        attPhase = False
         for line in string.strip().split('\n'):
-            stripped, line_type = self.strip(line)
-            if stripped:
-                if line_type == "arg":
-                    arg = stripped.split(",")
-                    if len(arg) > 1:
-                        # Ignore the other declaration?
-                        logger.error("Excessive number of arguments in an argument declaration")
-                        raise Exception("Excessive number of arguments in an argument declaration")
-                    if (self.__nsymtab.get(arg[0]) not in self.vertices):
-                        self.vertices.append(self.__nsymtab.get(arg[0]))
-                        self.num_vertices += 1
-                    else:
-                        logger.error("Duplicate argument declaration.")
-                        raise Exception("Duplicate argument declaration.")
-                    if attPhase:
-                        logger.error("Mixed up declaration")
-                        raise Exception("Mixed up declaration")
-                elif line_type == "att":
-                    attPhase = True
-                    args = stripped.split(",")
-                    if len(args) == 1:
-                        logger.error("Insufficient number of arguments in an attack declaration")
-                        raise Exception("Insufficient number of arguments in an attack declaration")
-                    else:
-                        if (len(args) > 2):
-                            logger.error("Excessive number of arguments in an attack declaration")
-                            raise Exception("Excessive number of arguments in an attack declaration")
-                        if ((self.__nsymtab.get(args[0]), self.__nsymtab.get(args[1])) not in self.edges):
-                            if (self.__nsymtab.get(args[0]) in self.vertices and self.__nsymtab.get(args[1]) in self.vertices):
-                                _add_directed_edge(self.edges, self.adjacency_list, self.__nsymtab.get(args[0]), self.__nsymtab.get(args[1]))
-                            else:
-                                logger.error("Attack declaration involves undeclared argument(s)") 
-                                raise Exception("Attack declaration involves undeclared argument(s)")
-                        else:
-                            logger.error("Duplicate attack declaration.")  
-                            raise Exception("Duplicate attack declaration.")
-                else:
-                    logger.error("Invalid line type")
-                    raise Exception("Invalid line type")
+            stripped, line_type = line[4:-2], line[:3]
+            if line_type == "arg":
+                self.vertices.append(stripped)
+                self.num_vertices += 1
+            elif line_type == "att":
+                args = stripped.split(",")
+                if (len(args) != 2):
+                    logger.error("Invalid number of arguments in an attack declaration")
+                    raise Exception("Invalid number of arguments in an attack declaration")
+                _add_directed_edge(self.edges, self.adjacency_list, self.__nsymtab.get(args[0]), self.__nsymtab.get(args[1]))
             else:
-                logger.error("Encounter empty declaration")
-                raise Exception("Encounter empty declaration")
-
+                logger.error("Invalid declaration type")
+                raise Exception("Invalid declaration type")
 
 class CnfReader(DimacsReader):
     def __init__(self):
