@@ -1,7 +1,7 @@
 # 22.01.2021
 ## CE Admissible
 
-1. Run as:
+1. Run with:
     ```
     -f <INPUT FILE> CEAdmissible 
     ```
