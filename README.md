@@ -1,3 +1,13 @@
+# 22.01.2021
+## CE Admissible
+
+1. Run as:
+    ```
+    -f <INPUT FILE> CEAdmissible 
+    ```
+***
+
+
 # 22.12.2020
 ## CE Stable
 
@@ -11,7 +21,7 @@
     ```
 ***
 
-# 21.11.2020 - Week 1
+# 21.11.2020
 1. Install dependencies with *conda*.
     ```
     conda env create --file environment.yml
