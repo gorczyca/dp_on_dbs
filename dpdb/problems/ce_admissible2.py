@@ -11,7 +11,7 @@ from dpdb.parser_test import TestCEReader
 logger = logging.getLogger(__name__)
 
 PROBLEM_NAME = 'problem_ceadmissible'
-EXTRA_COL_DATATYPE = 'SMALLINT'
+EXTRA_COL_DATATYPE = 'BOOLEAN'
 
 
 def var2extra_col(var):
@@ -28,15 +28,15 @@ def var2extra_col(var):
 #   by Wolfgang Dvořák, Reinhard Pichler, Stefan Woltran
 
 # Encoding
-# v{var} BOOLEAN | w{var} SMALLINT |    MEANING
+# v{var} BOOLEAN | w{var} BOOLEAN  |    MEANING
 # ----------------------------------------------
-#       0        |       0         |    OUT
-#       0        |       1         |    ATT
-#       0        |       2         |    DEF
+#       0        |       null      |    OUT
+#       0        |       0         |    ATT
+#       0        |       1         |    DEF
 #       1        |       -         |    IN
 
 
-class CEAdmissible(Problem):
+class CEAdmissible2(Problem):
     def __init__(self, fname, pool, input_format, unit_test, *args, **kwargs):
         Problem.__init__(self, fname, pool, *args, **kwargs)
 
@@ -73,7 +73,7 @@ class CEAdmissible(Problem):
 
     def td_node_extra_columns(self, node):
         """Returns names and datatypes of additional columns column for a node of a tree decomposition.
-        Here, it returns an additional column of type SMALLINT for every variable in the bag
+        Here, it returns an additional column of type BOOLEAN for every variable in the bag
         and a column for counting the extensions.
 
         :param node: Node of the tree decomposition.
@@ -84,7 +84,7 @@ class CEAdmissible(Problem):
     def assignment_extra_cols(self, node):
         """Returns additional columns that should appear in the topmost SELECT clause.
         Here, returns the extra variable columns, as well as the model_count column.
-        Returns null::SMALLINT for variables that will be forgotten in the parent node.
+        Returns null::BOOLEAN for variables that will be forgotten in the parent node.
 
         :param node: Node of the tree decomposition.
         :return: Additional columns for the topmost SELECT clause.
@@ -125,7 +125,11 @@ class CEAdmissible(Problem):
         """
         # if vertex v not in stored_vertices (which means it will be forgotten in the parent)
         # OR node is root (which means no other attack will appear), then it must not be labelled ATT
-        forgotten_next_condition = [f'NOT ({var2extra_col(v)} = 1)'
+
+        # alternatively:
+        #forgotten_next_condition = [f'({var2extra_col(v)} OR ({var2extra_col(v)} IS null))'
+        # Rule out false, preserve null (OUT) and true (DEF)
+        forgotten_next_condition = [f'{var2extra_col(v)} IS NOT false'
                                     for v in node.vertices if v not in node.stored_vertices or node.is_root()]
 
         # no two vertices can be labeled IN if there's an edge between them
@@ -162,22 +166,22 @@ class CEAdmissible(Problem):
         if not node.needs_introduce(var):
             # if var is not introduced (has appeared before in some child), check if it hasn't already been
             # labelled DEF
-            def_conditions += ["({}.{} = 2)".format(node2tab_alias(child_node), var2extra_col(var))
+            def_conditions += ["({}.{})".format(node2tab_alias(child_node), var2extra_col(var))
                                for child_node in node.vertex_children(var)]
             # if var has been labelled ATT before (in some child) then var has to be labelled ATT
             # (unless it is defeated in the current node)
-            att_conditions_att_already = ["({}.{} = 1)".format(node2tab_alias(child_node), var2extra_col(var))
+            att_conditions_att_already = ["(NOT {}.{})".format(node2tab_alias(child_node), var2extra_col(var))
                                           for child_node in node.vertex_children(var)]
 
         # var must be remain as ATT if no attacker of var is labelled IN
         att_conditions_not_defeated = [f'NOT {v}' for v in attacking_var]
 
         return f'CASE ' \
-               f'WHEN {" OR ".join(def_conditions) if def_conditions else "FALSE"} THEN 2 ' \
+               f'WHEN {" OR ".join(def_conditions) if def_conditions else "FALSE"} THEN true ' \
                f'WHEN ({" OR ".join(attacked_by_var) if attacked_by_var else "FALSE"}) ' \
                     f'AND ({" AND ".join(att_conditions_not_defeated) if att_conditions_not_defeated else "TRUE"}) ' \
-                    f'OR ({" OR ".join(att_conditions_att_already) if att_conditions_att_already else "FALSE"}) THEN 1 ' \
-               f'ELSE 0 '\
+                    f'OR ({" OR ".join(att_conditions_att_already) if att_conditions_att_already else "FALSE"}) THEN false ' \
+               f'ELSE null::{EXTRA_COL_DATATYPE} '\
                f'END'
 
     # TODO: Temporary:
@@ -229,7 +233,7 @@ def node2cnt(node):
     return "{}.model_count".format(node2tab_alias(node))
 
 
-args.specific[CEAdmissible] = dict(
+args.specific[CEAdmissible2] = dict(
     help="Give the number of the admissible sets of a given file",
     options={
         "--input-format": dict(
