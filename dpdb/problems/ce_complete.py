@@ -1,6 +1,6 @@
 """Calculates the number of complete extensions given an argumentation framework"""
 
-import logging
+import logging, os
 
 from dpdb.problem import Problem, args
 from dpdb.reader import TgfReader, ApxReader
@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 PROBLEM_NAME = 'problem_cecomplete'
 
 # Encoding
-# v_var INTEGER | p_var BOOLEAN |    MEANING
+# v_var SMALLINT| p_var BOOLEAN |    MEANING
 # ----------------------------------------------
 #       0       |       1       |    Invalid
 #       0       |       0       |    IN
@@ -24,7 +24,7 @@ PROBLEM_NAME = 'problem_cecomplete'
 
 
 def var2col_proved(var):
-    """Returns the name of the column indicating whether variable (argument) var is defeated/out.
+    """Returns the name of the column indicating whether variable (argument) var is proved/not.
 
     :param var: Id of variable (argument)
     :return: Column name
@@ -78,7 +78,7 @@ class CEComplete(Problem):
 
     def assignment_extra_cols(self, node):
         """Returns additional columns that should appear in the topmost SELECT clause.
-        Here, returns the 'defeated' columns, as well as the model_count column.
+        Here, returns the 'proved' columns, as well as the model_count column.
         Returns null::BOOLEAN for variables that will be forgotten in the parent node.
 
         :param node: Node of the tree decomposition.
@@ -98,7 +98,7 @@ class CEComplete(Problem):
 
     def candidate_extra_cols(self, node):
         """Returns additional values to be selected as candidates.
-        Here, calculates the value for the 'defeat' column (see var2defeat method) as well as the value for counter.
+        Here, calculates the value for the 'proved' column (see var2proved method) as well as the value for counter.
 
         :param node: Node of the tree decomposition.
         :return: Additional values to be selected as candidates.
@@ -125,7 +125,7 @@ class CEComplete(Problem):
         # if vertex v is attacked by something in IN, it must be DEF(p)
         must_be_defeated = [f'NOT ({var2col(v)} = 0 AND {var2col(w)} = 2)' for (v, w) in self.subframework_edges(node)]
 
-        # if vertex v is in IN and attacked by something, it must be DEF
+        # if vertex v is in IN and attacked by something, the attacker must be DEF
         admissible_condition = [f'NOT ({var2col(v)} = 2 AND {var2col(w)} = 0)' for (v, w) in self.subframework_edges(node)]
 
         # no two vertices can be labeled in if there's an edge between them
@@ -200,6 +200,10 @@ class CEComplete(Problem):
         model_count = self.db.update(PROBLEM_NAME, ["model_count"], [sum_count], [f"ID = {self.id}"], "model_count")[0]
         logger.info("Problem has %d complete extensions", model_count)
 
+    def call_aspartix(self, fname):
+        if fname.endswith(".apx"):
+            print(fname)
+            os.system(f"clingo --quiet=3 {fname} aspartix/complete.lp 0")
 
 def var2cnt(node, var):
     if node.needs_introduce(var):

@@ -1,6 +1,6 @@
 """Calculates the number of admissible  sets given an argumentation framework"""
 
-import logging
+import logging, os
 
 from dpdb.problem import Problem, args
 from dpdb.reader import TgfReader, ApxReader
@@ -221,6 +221,10 @@ class CEAdmissible2(Problem):
         model_count = self.db.update(PROBLEM_NAME, ["model_count"], [sum_count], [f"ID = {self.id}"], "model_count")[0]
         logger.info("Problem has %d admissible sets", model_count)
 
+    def call_aspartix(self, fname):
+        if fname.endswith(".apx"):
+            print(fname)
+            os.system(f"clingo --quiet=3 {fname} aspartix/admissible.lp 0")
 
 def var2cnt(node, var):
     if node.needs_introduce(var):
