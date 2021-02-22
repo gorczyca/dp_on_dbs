@@ -1,6 +1,6 @@
 """Calculates the number of stable extensions given an argumentation framework"""
 
-import logging
+import logging, os
 
 from dpdb.problem import Problem, args
 from dpdb.reader import TgfReader, ApxReader
@@ -182,6 +182,10 @@ class CEStable(Problem):
         model_count = self.db.update(PROBLEM_NAME, ["model_count"], [sum_count], [f"ID = {self.id}"], "model_count")[0]
         logger.info("Problem has %d stable extensions", model_count)
 
+    def call_aspartix(self, fname):
+        if fname.endswith(".apx"):
+            print(fname)
+            os.system(f"clingo --quiet=3 {fname} aspartix/stable.lp 0")
 
 def var2cnt(node, var):
     if node.needs_introduce(var):
