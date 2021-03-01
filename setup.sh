@@ -11,7 +11,7 @@ sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'XXX';"			# ?
 sudo -u postgres psql -c "CREATE USER logicsem WITH PASSWORD 'XXX';"
 sudo -u postgres psql -c "CREATE DATABASE logicsem;"
 
-# Assume git, gcc, and cmake?
+# Assume git, gcc, cmake, and doxygen?
 
 # Install gcc
 sudo apt install build-essential
@@ -26,6 +26,9 @@ cd cmake-3.20.0-rc2
 ./bootstrap && make && sudo make install
 cmake --version
 cd ../dp_on_dbs
+
+# Install doxygen
+sudo apt-get install doxygen
 
 # Install htd
 echo "===== Install htd ====="
