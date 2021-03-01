@@ -1,12 +1,18 @@
 #!/bin/bash
-# Installation for Debian / Ubuntu v0.1
+# Installation v0.2 for CentOS
 
 echo "===== DPDB and Dependencies Installer ====="
-sudo apt-get update
+sudo yum update
 
 # Install Postgres
 echo "===== Install and setup PostgreSQL ====="
-aptitude -y install postgresql postgresql-contrib postgresql-common postgresql-client libpq-dev
+wget https://download.postgresql.org/pub/repos/yum/9.6/redhat/rhel-7-x86_64/pgdg-centos96-9.6-3.noarch.rpm --no-check-certificate
+sudo yum install pgdg-centos96-9.6-3.noarch.rpm epel-release
+sudo yum update
+sudo yum install postgresql96-server postgresql96-contrib
+sudo /usr/pgsql-9.6/bin/postgresql96-setup initdb
+sudo systemctl start postgresql-9.6
+sudo systemctl enable postgresql-9.6
 sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'XXX';"			# ?
 sudo -u postgres psql -c "CREATE USER logicsem WITH PASSWORD 'XXX';"
 sudo -u postgres psql -c "CREATE DATABASE logicsem;"
@@ -14,8 +20,7 @@ sudo -u postgres psql -c "CREATE DATABASE logicsem;"
 # Assume git, gcc, cmake, and doxygen?
 
 # Install gcc
-sudo apt install build-essential
-apt-get install manpages-dev
+sudo yum -y install gcc
 gcc --version
 
 # Install cmake
@@ -28,7 +33,7 @@ cmake --version
 cd ../dp_on_dbs
 
 # Install doxygen
-sudo apt-get install doxygen
+sudo yum -y install doxygen
 
 # Install htd
 echo "===== Install htd ====="
