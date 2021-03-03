@@ -23,9 +23,9 @@ sudo yum -y install openssl-devel
 
 # Install cmake
 cd ../
-wget https://github.com/Kitware/CMake/releases/download/v3.20.0-rc2/cmake-3.20.0-rc2.tar.gz --no-check-certificate
-tar -zxvf cmake-3.20.0-rc2.tar.gz
-cd cmake-3.20.0-rc2
+wget https://github.com/Kitware/CMake/releases/download/v3.19.6/cmake-3.19.6.tar.gz --no-check-certificate
+tar -zxvf cmake-3.19.6.tar.gz
+cd cmake-3.19.6
 ./bootstrap && make && sudo make install
 cmake --version
 cd ../dp_on_dbs
@@ -35,7 +35,8 @@ sudo yum -y install doxygen
 
 # Install htd
 echo "===== Install htd ====="
-git clone -b normalize_cli https://github.com/TU-Wien-DBAI/htd.git ../htd
+sudo yum -y install git
+git clone -b normalize_cli --single-branch https://github.com/TU-Wien-DBAI/htd.git ../htd
 cd ../htd
 cmake ./ && make
 make install
