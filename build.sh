@@ -1,27 +1,25 @@
 #!/bin/bash
-# Installation v0.2 for CentOS
+# Installation v0.3 for CentOS
 
 echo "===== DPDB and Dependencies Installer ====="
 sudo yum update
 
 # Install Postgres
 echo "===== Install and setup PostgreSQL ====="
-wget https://download.postgresql.org/pub/repos/yum/9.6/redhat/rhel-7-x86_64/pgdg-centos96-9.6-3.noarch.rpm --no-check-certificate
-sudo yum install pgdg-centos96-9.6-3.noarch.rpm epel-release
-sudo yum update
-sudo yum install postgresql96-server postgresql96-contrib
-sudo /usr/pgsql-9.6/bin/postgresql96-setup initdb
-sudo systemctl start postgresql-9.6
-sudo systemctl enable postgresql-9.6
+sudo yum -y install postgresql-server postgresql-contrib
+sudo postgresql-setup initdb
+sudo systemctl start postgresql
+sudo systemctl enable postgresql
 sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'XXX';"			# ?
 sudo -u postgres psql -c "CREATE USER logicsem WITH PASSWORD 'XXX';"
 sudo -u postgres psql -c "CREATE DATABASE logicsem;"
 
 # Assume git, gcc, cmake, and doxygen?
 
-# Install gcc
+# Install gcc, g++, openssl
 sudo yum -y install gcc
-gcc --version
+sudo yum -y install gcc-c++
+sudo yum -y install openssl-devel
 
 # Install cmake
 cd ../
@@ -39,7 +37,8 @@ sudo yum -y install doxygen
 echo "===== Install htd ====="
 git clone -b normalize_cli https://github.com/TU-Wien-DBAI/htd.git ../htd
 cd ../htd
-cmake ./ && sudo make install
+cmake ./ && make
+make install
 cd ../dp_on_dbs
 
 # Install Anaconda
@@ -48,8 +47,9 @@ cd ../
 wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh --no-check-certificate
 chmod +x Miniconda3-latest-Linux-x86_64.sh
 ./Miniconda3-latest-Linux-x86_64.sh
-cd ../dp_on_dbs
+source ~/.bashrc
 
 echo "===== Create Anaconda Environment for DPDB ====="
+cd dp_on_dbs
 conda env create -f environment.yml
 conda activate nesthdb
