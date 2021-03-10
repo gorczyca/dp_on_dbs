@@ -9,7 +9,7 @@ cd ../
 wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh --no-check-certificate
 chmod +x Miniconda3-latest-Linux-x86_64.sh
 ./Miniconda3-latest-Linux-x86_64.sh
-source ~/.bashrc
+. $CONDA_PREFIX/etc/profile.d/conda.sh
 
 echo "===== Create Anaconda Environment for DPDB ====="
 cd dp_on_dbs
