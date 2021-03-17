@@ -1,5 +1,5 @@
 #!/bin/bash
-# Installation v0.4
+# Installation v0.5
 
 echo "===== DPDB and Dependencies Installer ====="
 
@@ -22,7 +22,7 @@ conda install -y -c anaconda postgresql
 initdb -D mylocal_db
 pg_ctl -D mylocal_db -l logfile start
 createuser -s postgres
-psql postgres -c "ALTER USER postgres PASSWORD 'XXX';"			# ?
+psql postgres -c "ALTER USER postgres PASSWORD 'XXX';"   		 # ?
 psql postgres -c "CREATE USER logicsem WITH PASSWORD 'XXX';"
 psql postgres -c "CREATE DATABASE logicsem;"
 
@@ -47,4 +47,13 @@ git clone -b normalize_cli --single-branch https://github.com/TU-Wien-DBAI/htd.g
 cd ../htd
 cmake -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX .
 make && make install
+cd ..
+
+# install mu-toksia
+conda install -y -c anaconda zlib
+git clone https://bitbucket.org/andreasniskanen/mu-toksia.git
+cd mu-toksia
+make clean
+make cmsat
+make
 cd ../dp_on_dbs
