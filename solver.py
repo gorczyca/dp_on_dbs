@@ -3,19 +3,19 @@
 """DPDB Solver
 
 Usage:
-	solve.py (-p | --problem) <task> (-f | --file) <file> (-fo | --format) <fileformat> [-a <additional_parameter>]
-	solve.py --formats
-	solve.py --problems
-	solve.py (-h | --help)
+	solver.py (-p | --problem) <task> (-f | --file) <file> (-fo | --format) <fileformat> [-a <additional_parameter>]
+	solver.py --formats
+	solver.py --problems
+	solver.py (-h | --help)
 
 Options:
 	-h --help			Show this screen.
 	--formats			Show all supported file formats
 	--problems			Show all supported problems
-	-p --problem 		Argumentation problem to solve
+	-p --problem 			Argumentation problem to solve
 	-f --file 			Input file for the problem to solve
-	-fo --fileformat	File format of the input file
-	-a 					Additional parameter for DC and DS problem: arguments that are queried for acceptance
+	-fo --fileformat		File format of the input file
+	-a 				Additional parameter for DC and DS problem: arguments that are queried for acceptance
 """
 import subprocess, random
 from docopt import docopt
