@@ -14,6 +14,8 @@ from dpdb.treedecomp import TreeDecomp
 from dpdb.problem import args
 
 logger = logging.getLogger("dpdb")
+# Modify treewidth limit here
+tw_limit = 100
 
 def read_cfg(cfg_file):
     import json
@@ -58,7 +60,7 @@ def solve_problem(cfg, cls, file, **kwargs):
 
     pool = BlockingThreadedConnectionPool(1,cfg["db"]["max_connections"],**cfg["db"]["dsn"])
     problem = cls(file,pool, **cfg["dpdb"], **kwargs)
-
+    
     logger.info("Using tree decomposition seed: {}".format(kwargs["runid"]))
     # Run htd
     p = subprocess.Popen([cfg["htd"]["path"], "--seed", str(kwargs["runid"]), *cfg["htd"]["parameters"]], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
@@ -81,12 +83,16 @@ def solve_problem(cfg, cls, file, **kwargs):
     if "td_file" in kwargs and kwargs["td_file"]:
         with FileWriter(kwargs["td_file"]) as fw:
             fw.write_td(tdr.num_bags, tdr.tree_width, tdr.num_orig_vertices, tdr.root, tdr.bags, td.edges)
-    problem.set_td(td)
-    problem.setup()
-    if "faster" not in kwargs or not kwargs["faster"]:
-        problem.store_cfg(flatten_cfg(cfg,("db.dsn","db_admin","htd.path")))
-    problem.solve()
-
+    
+    if (td.tree_width <= tw_limit):
+        problem.set_td(td)
+        problem.setup()
+        if "faster" not in kwargs or not kwargs["faster"]:
+            problem.store_cfg(flatten_cfg(cfg,("db.dsn","db_admin","htd.path")))
+        problem.solve()
+    else:
+        print("Treewidth Limit Reached")
+        
 _LOG_LEVEL_STRINGS = ["DEBUG_SQL", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
 
 # Simple custom class to use both argparse formats at once
@@ -149,5 +155,4 @@ if __name__ == "__main__":
     logging.basicConfig(format='[%(levelname)s] %(name)s: %(message)s', level=log_level)
 
     cfg = read_cfg(args.config)
-
     solve_problem(cfg,**vars(args))
