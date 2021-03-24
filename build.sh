@@ -15,6 +15,7 @@ echo "===== Create Anaconda Environment for DPDB ====="
 cd dp_on_dbs
 conda env create -f environment.yml
 conda activate nesthdb
+conda install -y -c anaconda docopt
 
 # Install Postgres
 echo "===== Install and setup PostgreSQL ====="
