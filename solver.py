@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # -*- coding: future_fstrings -*-
 """DPDB Solver
 
@@ -17,7 +16,7 @@ Options:
 	-fo --fileformat		File format of the input file
 	-a 				Additional parameter for DC and DS problem: arguments that are queried for acceptance
 """
-import subprocess, random
+import subprocess
 from docopt import docopt
 from subprocess import Popen
 from dpdb.reader import ApxReader, TgfReader, TdReader
@@ -35,37 +34,35 @@ def read_cfg(cfg_file):
 
 if __name__ == '__main__':
 	tw_limit = 100
+	run_mutoksia = False
+
 	args = docopt(__doc__)
-	if args['--formats'] == True:
-		print("[apx, tgf]")
-	elif args['--problems'] == True:
-		print("[CE-CO, CE-PR, CE-ST]")
+	if args['--formats']:
+		print("[apx,tgf]")
+	elif args['--problems']:
+		print("[DS-CO,DS-PR,DS-ST,DS-SST,DS-STG,DS-ID,DC-CO,DC-PR,DC-ST,DC-SST,DC-STG,SE-CO,SE-PR,SE-ST,SE-SST,SE-STG,SE-ID,CE-CO,CE-ST]")
 	else:
-		cfg = read_cfg("config.json")
-		p = subprocess.Popen([cfg["htd"]["path"], "--seed", "0", *cfg["htd"]["parameters"]], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-
-		input_ = None
-		if args['<fileformat>'] == "apx":
-			input_ = ApxReader.from_file(args['<file>'])
-		elif args['<fileformat>'] == "tgf":
-			input_ = TgfReader.from_file(args['<file>'])
-		input = (input_.num_vertices, input_.edges)
-
-		StreamWriter(p.stdin).write_gr(*input)
-		p.stdin.close()
-		tdr = TdReader.from_stream(p.stdout)
-		p.wait()
-
 		problem = ''
 		if (args['<task>'] == "CE-CO"):
 			problem = "CEComplete"
 		elif (args['<task>'] == "CE-ST"):
 			problem = "CEStable"
-		elif (args['<task>'] == "CE-PR"):
-			problem = "CEPreferred"
-
-		# Should be using popen.
-		if tdr.tree_width < tw_limit:
-			print(f"python ../../dpdb.py -f {args['<file>']} {problem} --input-format {args['<fileformat>']}")
 		else:
-			print(f"../mu-toksia/mu-toksia -p {args['<task>']} -f {args['<file>']} -fo {args['<fileformat>']}")
+			problem = args['<task>']
+
+		if (problem == "CEComplete" or problem == "CEStable"):
+			proc = subprocess.Popen(f"python dpdb.py -f {args['<file>']} {problem} --input-format {args['<fileformat>']}", stdout=subprocess.PIPE)
+			outs, errs = proc.communicate()
+			proc.wait()
+			if ("Treewidth Limit Reached" in str(outs)):
+				run_mutoksia = True
+		else:
+			run_mutoksia = True
+			
+	if run_mutoksia:
+		if args['-a']:
+			proc = subprocess.Popen(f"../mu-toksia/mu-toksia -p {args['<task>']} -f {args['<file>']} -fo {args['<fileformat>']} -a {args['<additional_parameter>']}")
+			proc.wait()
+		else:
+			proc = subprocess.Popen(f"../mu-toksia/mu-toksia -p {args['<task>']} -f {args['<file>']} -fo {args['<fileformat>']}")
+			proc.wait()
