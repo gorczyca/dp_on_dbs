@@ -16,7 +16,7 @@ Options:
 	-fo --fileformat		File format of the input file
 	-a 				Additional parameter for DC and DS problem: arguments that are queried for acceptance
 """
-import subprocess
+import subprocess, os
 from docopt import docopt
 from subprocess import Popen
 from dpdb.reader import ApxReader, TgfReader, TdReader
@@ -51,7 +51,7 @@ if __name__ == '__main__':
 			problem = args['<task>']
 
 		if (problem == "CEComplete" or problem == "CEStable"):
-			proc = subprocess.Popen(f"python dpdb.py -f {args['<file>']} {problem} --input-format {args['<fileformat>']}", stdout=subprocess.PIPE)
+			proc = subprocess.Popen(["python","dpdb.py","-f",args['<file>'],problem,"--input-format",args['<fileformat>']], stdout=subprocess.PIPE)
 			outs, errs = proc.communicate()
 			proc.wait()
 			if ("Treewidth Limit Reached" in str(outs)):
@@ -60,9 +60,10 @@ if __name__ == '__main__':
 			run_mutoksia = True
 			
 	if run_mutoksia:
+		os.chdir("../mu-toksia")
 		if args['-a']:
-			proc = subprocess.Popen(f"../mu-toksia/mu-toksia -p {args['<task>']} -f {args['<file>']} -fo {args['<fileformat>']} -a {args['<additional_parameter>']}")
+			proc = subprocess.Popen(["./mu-toksia", "-p",args['<task>'], "-f" ,args['<file>'], "-fo", args['<fileformat>'], "-a", args['<additional_parameter>']])
 			proc.wait()
 		else:
-			proc = subprocess.Popen(f"../mu-toksia/mu-toksia -p {args['<task>']} -f {args['<file>']} -fo {args['<fileformat>']}")
+			proc = subprocess.Popen(["./mu-toksia", "-p",args['<task>'], "-f" ,args['<file>'], "-fo", args['<fileformat>']])
 			proc.wait()

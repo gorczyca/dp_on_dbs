@@ -1,5 +1,5 @@
 #!/bin/bash
-# Installation v0.5
+# Installation v0.6
 
 echo "===== DPDB and Dependencies Installer ====="
 
@@ -9,7 +9,7 @@ cd ../
 wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh --no-check-certificate
 chmod +x Miniconda3-latest-Linux-x86_64.sh
 ./Miniconda3-latest-Linux-x86_64.sh
-. $CONDA_PREFIX/etc/profile.d/conda.sh
+. ~/miniconda3/etc/profile.d/conda.sh
 
 echo "===== Create Anaconda Environment for DPDB ====="
 cd dp_on_dbs
@@ -30,10 +30,8 @@ psql postgres -c "CREATE DATABASE logicsem;"
 # Assume git, gcc, cmake, and doxygen?
 
 # Install gcc, g++, make, cmake, doxygen
-echo "===== Install GCC ====="
-conda install -y -c anaconda gcc_linux-64
-echo "===== Install G++ ====="
-conda install -y -c anaconda gxx_linux-64
+echo "===== Install Compilers ====="
+conda install -y -c conda-forge compilers
 echo "===== Install Make ====="
 conda install -y -c anaconda make
 echo "===== Install CMake ====="
@@ -58,3 +56,6 @@ make clean
 make cmsat
 make
 cd ../dp_on_dbs
+
+echo "To use dpdb:"
+echo "Start conda environment: conda activate nesthdb"
