@@ -84,7 +84,7 @@ def solve_problem(cfg, cls, file, **kwargs):
         with FileWriter(kwargs["td_file"]) as fw:
             fw.write_td(tdr.num_bags, tdr.tree_width, tdr.num_orig_vertices, tdr.root, tdr.bags, td.edges)
     
-    if (td.tree_width <= tw_limit):
+    if td.tree_width <= tw_limit:
         problem.set_td(td)
         problem.setup()
         if "faster" not in kwargs or not kwargs["faster"]:
