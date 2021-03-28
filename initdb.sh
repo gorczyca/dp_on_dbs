@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 pgpath=/dev/shm/
 
+killall -9 postgres
+sleep 1
+
 psql dpdb_pg -c 'select pg_kill_all_sessions('"'"'janedoe'"'"','"'"'janedoe'"'"');'
 sleep 1
 
@@ -27,7 +30,7 @@ grant execute on function pg_kill_all_sessions(varchar,varchar) to janedoe;
 EOF
 
 rm -rf /tmp/tmp*
-killall -9 python3
+#killall -9 python
 killall -9 projMC-1.0
 killall -9 clingo
 killall -9 miniC2D-1.0.0
