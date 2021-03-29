@@ -3,29 +3,28 @@
     "dsn": {
       "host": "localhost",
       "port": 5432,
-      "database": "logicsem",
-      "user": "logicsem",
-      "password": "Qwerty123",
-      "application_name": "dpdb10"
+      "database": "dpdb_pg",
+      "user": "janedoe",
+      "password": "janedoe",
+      "application_name": "dpdb"
     },
     "max_connections": 100
   },
   "db_admin": {
       "host": "localhost",
       "port": 5432,
-      "database": "logicsem",
-      "user": "postgres",
-      "password": "Qwerty123",
+      "database": "dpdb_pg",
+      "user": "janedoe",
+      "password": "janedoe",
       "application_name": "dpdb-admin"
   },
   "htd": {
-    "_commented_out_path": "/home/piotrek/Dresden/3sem/project/htd-normalize-cli-build/bin/htd_main",
-    "path": "./htd_main-1.2.0",
+    "path": "../htd/bin/htd_main",
     "parameters": [
       "--child-limit","5"
     ]
   },
   "dpdb": {
-    "max_worker_threads": 24
+    "max_worker_threads": 12
   }
 }
