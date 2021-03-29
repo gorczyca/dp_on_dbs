@@ -61,13 +61,15 @@ def main(formats, problems, p, f, fo, a):
 			# problem, semantics = ('CEComplete', 'complete') if task == 'CE-CO' else ('CEStable', 'stable')
 			problem, semantics = ('CEComplete', 'CO') if p == 'CE-CO' else ('CEStable', 'ST')
 			#output = subprocess.check_output(args=['python', "dpdb.py", "-f", f, problem, "--input-format", fo], shell=True, stderr=subprocess.STDOUT)
-			output = subprocess.check_output(args=['./run_dpdb.sh', f, problem, fo], shell=True, stderr=subprocess.STDOUT)
+			output = subprocess.check_output(args=[f'./run_dpdb.sh {f} {problem} {fo}'], shell=True, stderr=subprocess.STDOUT)
+			#output = subprocess.check_output(args=['./run_dpdb.sh', f, problem, fo], shell=True, stderr=subprocess.STDOUT)
 			#  DPDB sends info logs to stderr
 			# proc = subprocess.Popen(args=[PYTHON_PATH, "dpdb.py", "-f", args['<file>'], problem, "--input-format", args['<fileformat>']], stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
 			# _, errs = proc.communicate()  # DPDB sends output logs to stderr
 			# proc.wait()
 			# output = errs.decode()
 			output = output.decode()
+			# print(output)
 			dpdb_task_aborted = (TW_LIMIT_ERROR_MESSAGE in output) or (ONE_BAG_ERROR_MESSAGE in output)
 
 			# if False:  # for testing solvers when TW to high

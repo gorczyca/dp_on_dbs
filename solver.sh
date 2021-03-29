@@ -34,7 +34,7 @@ fi
 unset __conda_setup
 # <<< conda initialize <<<
 
-conda activate nesthdb
+conda activate dpdb_env 
 
 # $myconda/envs/rb/bin/python $solver_cmd &
 

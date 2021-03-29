@@ -19,7 +19,7 @@
       "application_name": "dpdb-admin"
   },
   "htd": {
-    "path": "../htd/bin/htd_main",
+    "path": "./binaries/htd_main-1.2.0",
     "parameters": [
       "--child-limit","5"
     ]
