@@ -1,93 +1,49 @@
-# 22.01.2021
-## CE Admissible
+## Building
 
-1. Run with:
-    ```
-    -f <INPUT FILE> CEAdmissible 
-    ```
-***
-
-
-# 22.12.2020
-## CE Stable
-
-1. Run an example with the following parameters (simple examples 1-6), e.g.:
-    ```
-    -f input/stable_easy_examples/stable_easy_example2.tgf CEStable --input-format tgf
-    ```
-    Or:
-    ```
-    -f input/stable_easy_examples/stable_easy_example2.apx CEStable
-    ```
-***
-
-# 21.11.2020
-1. Install dependencies with *conda*.
-    ```
-    conda env create --file environment.yml
-    ```
-
-2. Run by executing:
-    ```
-    -f input/A1-4000.tgf cestable --input-format tgf
-    ```
-
-***
-
-# dpdb
-Solve dynamic programming problems on tree decompositions using databases
-
-## Requirements
-
-### htd
-
-[htd on github](https://github.com/TU-Wien-DBAI/htd/)
-
-Branch `normalize_cli` is required by dpdb (currently not included in htd's master)
-
-### Database
-[PostgreSQL](https://www.postgresql.org)
-
-### Python
-* Python 3
-* psycopg2
-* future-fstrings (for compatibility with older versions)
+Execute the [build.sh](./build.sh) script:
 ```
-pip install -r requirements.txt
+$ bash build.sh
 ```
+The above script (among other things) installs **conda**. You will have to scroll down the TOS, then type `yes` to agree to them and accept the default install directory.
 
-## Configuration
-Basic configuration (database connection, htd path, ...) are configured in **config.json**
+## Running
 
-## Usage
+Execute the [solver.sh](./solver.sh). Usage:
 
 ```
-python dpdb.py [GENERAL-OPTIONS] -f <INPUT-FILE> <PROBLEM> [PROBLEM-SPECIFIC-OPTIONS]
+$ ./solver.sh (-p | --problem) <task> (-f | --file) <file> (-fo | --format) <fileformat> [-a <additional_parameter>]
 ```
 
-### Currently implemented problems
-* SAT 
-* #SAT
-* Minimum Vertex Cover
-
-For additional help use
+### Examples
 ```
-python dpdb.py --help
+./solver.sh -p CE-ST -f input/stable_easy_examples/stable_easy_example2.apx -fo apx
 ```
-or 
+...returns the number of stable extensions of the framework [stable_easy_example2.apx](input/stable_easy_examples/stable_easy_example2.apx),
+
 ```
-python dpdb.py <PROBLEM> --help
+./solver.sh -p SE-ST -f input/stable_easy_examples/stable_easy_example2.apx -fo apx
 ```
-for problem specific help/options
+...returns 1 stable extension,
 
-## TODO / Future Work
 
-### Indexing
+```
+./solver.sh -p DC-ST -f input/stable_easy_examples/stable_easy_example2.apx -fo apx -a 2
+```
+...checks whether argument `2` is credulously justified w.r.t. stable semantics.
 
-Currently no indices are created. It is an open problem to investigate whether good indices can be determined just by the structure of the problem.
 
-Oracle's Bitmap Indices also seem worth a try (Oracle Enterprise Feature)
+### Other options:
+To see the list of supported input formats, execute:
+```
+$ ./subsolver.py --formats
+```
 
-### Resume / Re-run
+To view the help:
+```
+$ ./subsolver.py (-h | --help)
+```
 
-Re-construct input from database to be able to run the same instance again (without needing a seed for htd) or to resume previously unfinished jobs.
+To view the supported problems list:
+```
+$ ./subsolver.py --problems
+```
