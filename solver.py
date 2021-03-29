@@ -22,10 +22,6 @@ import re
 import argparse
 import sys
 
-from docopt import docopt
-
-# Version 2 of solver wrapper
-
 # Path to python interpreter in anaconda (should be the same as in 1st line)
 PYTHON_PATH = '/home/piotrek/System/programs/anaconda3/envs/nesthdb/bin/python'
 SUPPORTED_TASKS = [
@@ -39,7 +35,8 @@ DPDB_SUPPORTED_TASKS = [
 	'CE-CO', 'CE-ST'
 ]
 
-EXTENSIONS_NO_RE = re.compile(r'\[INFO]\s*dpdb\.problems\.[a-zA-Z0-9_]*:\s*Problem\s*has\s*(?P<val>\d+)\s*[a-zA-Z0-9_]*\s*extensions.*$', re.DOTALL)
+EXTENSIONS_NO_DPDB_RE = re.compile(r'\[INFO]\s*dpdb\.problems\.[a-zA-Z0-9_]*:\s*Problem\s*has\s*(?P<val>\d+)\s*[a-zA-Z0-9_]*\s*extensions.*$', re.DOTALL)
+EXTENSIONS_NO_D4_RE = re.compile(r's\s*(?P<val>\d+).*$', re.DOTALL)
 COUNT_WITH_MU_TOKSIA = True
 DESCRIPTION = """DPDB v0.1
 Johannes Fichte (<email>), 
@@ -73,10 +70,11 @@ def main(formats, problems, p, f, fo, a):
 			output = output.decode()
 			dpdb_task_aborted = (TW_LIMIT_ERROR_MESSAGE in output) or (ONE_BAG_ERROR_MESSAGE in output)
 
+			# if False:  # for testing solvers when TW to high
 			if not dpdb_task_aborted:
-				extensions_no = re.findall(EXTENSIONS_NO_RE, output)[0]
+				extensions_no = re.findall(EXTENSIONS_NO_DPDB_RE, output)[0]
 			elif COUNT_WITH_MU_TOKSIA:  # If aborted (TW limit reached) run mu-toksia
-				mu_toksia_proc = subprocess.Popen(['./mu-toksia', '-p', f'EE-{semantics}', '-f', f, '-fo', fo], stdout=subprocess.PIPE)
+				mu_toksia_proc = subprocess.Popen(['./binaries/mu-toksia', '-p', f'EE-{semantics}', '-f', f, '-fo', fo], stdout=subprocess.PIPE)
 				extensions_no = 0
 				for _ in iter(lambda: mu_toksia_proc.stdout.readline(), b''):
 					extensions_no += 1
@@ -91,18 +89,22 @@ def main(formats, problems, p, f, fo, a):
 				extensions_no = max(0, extensions_no-2)
 			else:  # Run the d4
 				# TODO:
-				extensions_no = None
-				pass
+				aspartix_file = 'comp.dl' if p == 'CE-CO' else 'stable.dl'
+				output = subprocess.check_output(['./d4_bash.sh', f'./aspartix/{aspartix_file}', f],
+												stderr=subprocess.STDOUT)
+
+				output = output.decode()
+				extensions_no = re.findall(EXTENSIONS_NO_D4_RE, output)[0]
+
 				# run this bash script
-				# clingo -n0
+				# clingo -n0	# TODO: ?
 				# -> bash ....
 				#d4_proc = subprocess.call('./d4_bash.sh')
-
 
 			print(extensions_no)
 
 		else: 	# If task unsupported by DPDB run mu-toksia
-			mu_toksia_command = ['./mu-toksia', '-p', p, '-f', f, '-fo', fo]
+			mu_toksia_command = ['./binaries/mu-toksia', '-p', p, '-f', f, '-fo', fo]
 			if a:
 				mu_toksia_command += ['-a', a]
 
@@ -120,18 +122,17 @@ def parse_arguments():
 	parser.add_argument('-fo', help='File format (see supported file formats by invoking with "--formats").')
 	parser.add_argument('-a', help='Additional parameters')
 
-	#parser.add_argument('--formats', nargs='+')
 	if len(sys.argv) == 1:
 		print(DESCRIPTION)
 		sys.exit(1)
 
-	args, extras = parser.parse_known_args()
+	args, _ = parser.parse_known_args()
 	return args
 
 
 if __name__ == '__main__':
-	args = parse_arguments()
-	main(**vars(args))
+	arguments = parse_arguments()
+	main(**vars(arguments))
 
 
 
