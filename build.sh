@@ -14,7 +14,7 @@ chmod +x Miniconda3-latest-Linux-x86_64.sh
 echo "===== Create Anaconda Environment for DPDB ====="
 cd dp_on_dbs
 conda env create -f environment.yml
-conda activate dpdb_env
+# conda activate dpdb_env
 
 echo "===== Make binaries and scripts executable ====="
 chmod +x ./solver.sh
