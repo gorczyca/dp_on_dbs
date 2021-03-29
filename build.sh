@@ -25,3 +25,4 @@ chmod +x ./binaries/*
 
 # echo "To use dpdb:"
 # echo "Start conda environment: conda activate dpdb_env"
+echo "===== Done ====="
