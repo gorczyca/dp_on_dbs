@@ -15,7 +15,7 @@ from dpdb.problem import args
 
 logger = logging.getLogger("dpdb")
 # Modify treewidth limit here
-tw_limit = 100
+tw_limit = 12
 
 def read_cfg(cfg_file):
     import json
