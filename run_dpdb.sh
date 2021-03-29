@@ -3,11 +3,11 @@ basepath=$(dirname $(realpath $0))
 
 cd $(dirname $0)
 
-conda activate dpdb_env
+# conda activate dpdb_env
 
 $basepath/initdb.sh > /dev/stderr
-echo "===================="
-echo "SETUP DONE"
+# echo "===================="
+# echo "SETUP DONE"
 
 python $basepath/dpdb.py -f $1 $2 --input-format $3
 

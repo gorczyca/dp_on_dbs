@@ -31,13 +31,4 @@ EOF
 
 rm -rf /tmp/tmp*
 #killall -9 python
-killall -9 projMC-1.0
-killall -9 clingo
-killall -9 miniC2D-1.0.0
-killall -9 picosat-965
-killall -9 sharpSAT-git
-killall -9 cachet-1.21
-killall -9 pmc-1.0
-killall -9 ganak-1.0
-killall -9 sts-1.0
-killall -9 projClingo-1.0
+killall -9 d4

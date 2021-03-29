@@ -1,11 +1,10 @@
-#!/usr/bin/env conda run -n dpdb_env python
 """DPDB Solver
 
 Usage:
-	./solver.py (-p | --problem) <task> (-f | --file) <file> (-fo | --format) <fileformat> [-a <additional_parameter>]
-	./solver.py --formats
-	./solver.py --problems
-	./solver.py (-h | --help)
+	./subsolver.py (-p | --problem) <task> (-f | --file) <file> (-fo | --format) <fileformat> [-a <additional_parameter>]
+	./subsolver.py --formats
+	./subsolver.py --problems
+	./subsolver.py (-h | --help)
 
 Options:
 	-h --help			Show this screen.
@@ -34,15 +33,14 @@ DPDB_SUPPORTED_TASKS = [
 	'CE-CO', 'CE-ST'
 ]
 
-PYTHON_PATH = '/home/piotrek/System/programs/anaconda3/envs/nesthdb/bin/python'
 EXTENSIONS_NO_DPDB_RE = re.compile(r'\[INFO]\s*dpdb\.problems\.[a-zA-Z0-9_]*:\s*Problem\s*has\s*(?P<val>\d+)\s*[a-zA-Z0-9_]*\s*extensions.*$', re.DOTALL)
 EXTENSIONS_NO_D4_RE = re.compile(r's\s*(?P<val>\d+).*$', re.DOTALL)
 COUNT_WITH_MU_TOKSIA = True
-DESCRIPTION = """DPDB v0.1
-Johannes Fichte (<email>), 
-Markus Hecher (<email>), 
+DESCRIPTION = """A-Folio DPDB v0.1
+Johannes Fichte (johannes.fichte@tu-dresden.de), 
+Markus Hecher (markus.hecher@tuwien.ac.at), 
 Piotr Gorczyca (gorczycapj@gmail.com), 
-Ridhwan Dewoprabowo (email)
+Ridhwan Dewoprabowo (ridhwan.dewoprabowo@gmail.com)
 """
 ONE_BAG_ERROR_MESSAGE = 'One Bag Error'
 TW_LIMIT_ERROR_MESSAGE = 'Treewidth Limit Reached'
@@ -62,8 +60,8 @@ def main(formats, problems, p, f, fo, a):
 		elif p in DPDB_SUPPORTED_TASKS:
 			# problem, semantics = ('CEComplete', 'complete') if task == 'CE-CO' else ('CEStable', 'stable')
 			problem, semantics = ('CEComplete', 'CO') if p == 'CE-CO' else ('CEStable', 'ST')
-			output = subprocess.check_output(args=[PYTHON_PATH, "dpdb.py", "-f", f, problem, "--input-format", fo], stderr=subprocess.STDOUT)
-			# output = subprocess.check_output(args=['python', "dpdb.py", "-f", f, problem, "--input-format", fo], stderr=subprocess.STDOUT)
+			#output = subprocess.check_output(args=['python', "dpdb.py", "-f", f, problem, "--input-format", fo], shell=True, stderr=subprocess.STDOUT)
+			output = subprocess.check_output(args=['./run_dpdb.sh', f, problem, fo], shell=True, stderr=subprocess.STDOUT)
 			#  DPDB sends info logs to stderr
 			# proc = subprocess.Popen(args=[PYTHON_PATH, "dpdb.py", "-f", args['<file>'], problem, "--input-format", args['<fileformat>']], stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
 			# _, errs = proc.communicate()  # DPDB sends output logs to stderr
@@ -90,18 +88,13 @@ def main(formats, problems, p, f, fo, a):
 				# therefore we have to remove 2
 				extensions_no = max(0, extensions_no-2)
 			else:  # Run the d4
-				# TODO:
 				aspartix_file = 'comp.dl' if p == 'CE-CO' else 'stable.dl'
 				output = subprocess.check_output(['./d4_bash.sh', f'./aspartix/{aspartix_file}', f],
-												stderr=subprocess.STDOUT)
+												 shell=True, stderr=subprocess.STDOUT)
 
 				output = output.decode()
 				extensions_no = re.findall(EXTENSIONS_NO_D4_RE, output)[0]
 
-				# run this bash script
-				# clingo -n0	# TODO: ?
-				# -> bash ....
-				#d4_proc = subprocess.call('./d4_bash.sh')
 
 			print(extensions_no)
 

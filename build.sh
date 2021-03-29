@@ -17,11 +17,11 @@ conda env create -f environment.yml
 conda activate dpdb_env
 
 echo "===== Make binaries and scripts executable ====="
-chmod +x ./solver.py
+chmod +x ./solver.sh
 chmod +x ./run_dpdb.sh
 chmod +x ./initdb.sh
 chmod +x ./d4_bash.sh
 chmod +x ./binaries/*
 
-echo "To use dpdb:"
-echo "Start conda environment: conda activate dpdb_env"
+# echo "To use dpdb:"
+# echo "Start conda environment: conda activate dpdb_env"

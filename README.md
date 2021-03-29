@@ -1,9 +1,3 @@
-# Competition:
-- set python path (1st line) in [solver.py](./solver.py)
-- set gringo path in [d4_bash.sh](./d4_bash.sh)
--
-___
-
 # 22.01.2021
 ## CE Admissible
 
