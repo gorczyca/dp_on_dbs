@@ -155,4 +155,7 @@ if __name__ == "__main__":
     logging.basicConfig(format='[%(levelname)s] %(name)s: %(message)s', level=log_level)
 
     cfg = read_cfg(args.config)
-    solve_problem(cfg,**vars(args))
+    try:
+        solve_problem(cfg,**vars(args))
+    except KeyError as e:  # Hotfix (Issue #7)
+        print('One Bag Error')

@@ -47,6 +47,8 @@ Markus Hecher (<email>),
 Piotr Gorczyca (gorczycajp@gmail.com), 
 Ridhwan Dewoprabowo (email)
 """
+ONE_BAG_ERROR_MESSAGE = 'One Bag Error'
+TW_LIMIT_ERROR_MESSAGE = 'Treewidth Limit Reached'
 
 
 def main(formats, problems, p, f, fo, a):
@@ -69,7 +71,7 @@ def main(formats, problems, p, f, fo, a):
 			# proc.wait()
 			# output = errs.decode()
 			output = output.decode()
-			dpdb_task_aborted = "Treewidth Limit Reached" in output
+			dpdb_task_aborted = (TW_LIMIT_ERROR_MESSAGE in output) or (ONE_BAG_ERROR_MESSAGE in output)
 
 			if not dpdb_task_aborted:
 				extensions_no = re.findall(EXTENSIONS_NO_RE, output)[0]
