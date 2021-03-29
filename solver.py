@@ -1,11 +1,11 @@
-#!/home/piotrek/System/programs/anaconda3/envs/testing/bin/python
+#!/usr/bin/env conda run -n dpdb_env python
 """DPDB Solver
 
 Usage:
-	solver.py (-p | --problem) <task> (-f | --file) <file> (-fo | --format) <fileformat> [-a <additional_parameter>]
-	solver.py --formats
-	solver.py --problems
-	solver.py (-h | --help)
+	./solver.py (-p | --problem) <task> (-f | --file) <file> (-fo | --format) <fileformat> [-a <additional_parameter>]
+	./solver.py --formats
+	./solver.py --problems
+	./solver.py (-h | --help)
 
 Options:
 	-h --help			Show this screen.
@@ -22,8 +22,7 @@ import re
 import argparse
 import sys
 
-# Path to python interpreter in anaconda (should be the same as in 1st line)
-PYTHON_PATH = '/home/piotrek/System/programs/anaconda3/envs/nesthdb/bin/python'
+
 SUPPORTED_TASKS = [
 	'DS-CO', 'DS-ST',
 	'DC-CO', 'DC-ST',
@@ -35,13 +34,14 @@ DPDB_SUPPORTED_TASKS = [
 	'CE-CO', 'CE-ST'
 ]
 
+PYTHON_PATH = '/home/piotrek/System/programs/anaconda3/envs/nesthdb/bin/python'
 EXTENSIONS_NO_DPDB_RE = re.compile(r'\[INFO]\s*dpdb\.problems\.[a-zA-Z0-9_]*:\s*Problem\s*has\s*(?P<val>\d+)\s*[a-zA-Z0-9_]*\s*extensions.*$', re.DOTALL)
 EXTENSIONS_NO_D4_RE = re.compile(r's\s*(?P<val>\d+).*$', re.DOTALL)
 COUNT_WITH_MU_TOKSIA = True
 DESCRIPTION = """DPDB v0.1
 Johannes Fichte (<email>), 
 Markus Hecher (<email>), 
-Piotr Gorczyca (gorczycajp@gmail.com), 
+Piotr Gorczyca (gorczycapj@gmail.com), 
 Ridhwan Dewoprabowo (email)
 """
 ONE_BAG_ERROR_MESSAGE = 'One Bag Error'
@@ -52,6 +52,7 @@ def main(formats, problems, p, f, fo, a):
 
 	if formats:
 		print('[apx,tgf]')
+		# print('[tgf]')
 	elif problems:
 		print(f'[{",".join(SUPPORTED_TASKS)}]')
 	else:
@@ -62,6 +63,7 @@ def main(formats, problems, p, f, fo, a):
 			# problem, semantics = ('CEComplete', 'complete') if task == 'CE-CO' else ('CEStable', 'stable')
 			problem, semantics = ('CEComplete', 'CO') if p == 'CE-CO' else ('CEStable', 'ST')
 			output = subprocess.check_output(args=[PYTHON_PATH, "dpdb.py", "-f", f, problem, "--input-format", fo], stderr=subprocess.STDOUT)
+			# output = subprocess.check_output(args=['python', "dpdb.py", "-f", f, problem, "--input-format", fo], stderr=subprocess.STDOUT)
 			#  DPDB sends info logs to stderr
 			# proc = subprocess.Popen(args=[PYTHON_PATH, "dpdb.py", "-f", args['<file>'], problem, "--input-format", args['<fileformat>']], stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
 			# _, errs = proc.communicate()  # DPDB sends output logs to stderr

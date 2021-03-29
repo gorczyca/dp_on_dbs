@@ -1,11 +1,12 @@
 # run: conda env create --file environment.yml
-name: nesthdb
+name: dpdb_env
 channels:
   - anaconda
   - potassco
 dependencies:
   - python=3.7
   - clingo
+  - conda-forge::postgresql
   - psycopg2
   - pip
   - pip:
