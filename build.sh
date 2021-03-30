@@ -20,7 +20,7 @@ echo "===== Make binaries and scripts executable ====="
 chmod +x ./solver.sh
 chmod +x ./run_dpdb.sh
 chmod +x ./initdb.sh
-chmod +x ./d4_bash.sh
+# chmod +x ./d4_bash.sh
 chmod +x ./binaries/*
 
 # echo "To use dpdb:"
