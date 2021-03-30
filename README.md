@@ -16,18 +16,18 @@ $ ./solver.sh (-p | --problem) <task> (-f | --file) <file> (-fo | --format) <fil
 
 ### Examples
 ```
-./solver.sh -p CE-ST -f input/stable_easy_examples/stable_easy_example2.apx -fo apx
+./solver.sh -p CE-ST -f input/easy2.apx -fo apx
 ```
-...returns the number of stable extensions of the framework [stable_easy_example2.apx](input/stable_easy_examples/stable_easy_example2.apx),
+...returns the number of stable extensions of the framework [easy2.apx](input/easy2.apx),
 
 ```
-./solver.sh -p SE-ST -f input/stable_easy_examples/stable_easy_example2.apx -fo apx
+./solver.sh -p SE-ST -f input/easy2.apx -fo apx
 ```
 ...returns 1 stable extension,
 
 
 ```
-./solver.sh -p DC-ST -f input/stable_easy_examples/stable_easy_example2.apx -fo apx -a 2
+./solver.sh -p DC-ST -f input/easy2.apx -fo apx -a 2
 ```
 ...checks whether argument `2` is credulously justified w.r.t. stable semantics.
 
