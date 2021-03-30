@@ -23,7 +23,7 @@ You will have to scroll down the TOS, then type `yes` to agree to them and accep
 
 # Running
 
-Running works precisely as required in the [solver requirements](http://argumentationcompetition.org/2021/SolverRequirements.pdf) 
+Running works precisely as required in the [solver requirements](http://argumentationcompetition.org/2021/SolverRequirements.pdf).
 
 Execute the [solver.sh](./solver.sh). Usage:
 
