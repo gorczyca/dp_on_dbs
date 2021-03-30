@@ -1,4 +1,4 @@
-"""DPDB Solver
+"""A-Folio DPDB Solver
 
 Usage:
 	./subsolver.py (-p | --problem) <task> (-f | --file) <file> (-fo | --format) <fileformat> [-a <additional_parameter>]
@@ -72,7 +72,7 @@ def main(formats, problems, p, f, fo, a):
 			# print(output)
 			dpdb_task_aborted = (TW_LIMIT_ERROR_MESSAGE in output) or (ONE_BAG_ERROR_MESSAGE in output)
 
-			# if False:  # for testing solvers when TW to high
+			#if False:  # for testing solvers when TW to high
 			if not dpdb_task_aborted:
 				extensions_no = re.findall(EXTENSIONS_NO_DPDB_RE, output)[0]
 			elif COUNT_WITH_MU_TOKSIA:  # If aborted (TW limit reached) run mu-toksia
@@ -91,8 +91,8 @@ def main(formats, problems, p, f, fo, a):
 				extensions_no = max(0, extensions_no-2)
 			else:  # Run the d4
 				aspartix_file = 'comp.dl' if p == 'CE-CO' else 'stable.dl'
-				output = subprocess.check_output(['./d4_bash.sh', f'./aspartix/{aspartix_file}', f],
-												 shell=True, stderr=subprocess.STDOUT)
+				output = subprocess.check_output(args=[f'./d4_bash.sh ./aspartix/{aspartix_file} {f}'],
+									shell=True, stderr=subprocess.STDOUT)
 
 				output = output.decode()
 				extensions_no = re.findall(EXTENSIONS_NO_D4_RE, output)[0]
