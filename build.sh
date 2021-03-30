@@ -22,7 +22,7 @@ chmod +x Miniconda3-latest-Linux-x86_64.sh
 echo
 echo -e $GREEN"DPDB: Creating conda environment."$NC
 echo
-cd dp_on_dbs
+cd A-Folio-DPDB
 if conda info --envs | grep dpdb_env; then
   echo
   echo -e $CYAN"DPDB: dpdb_env environment already created."$NC
