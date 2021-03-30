@@ -121,7 +121,7 @@ def parse_arguments():
 
 	if len(sys.argv) == 1:
 		print(DESCRIPTION)
-		sys.exit(1)
+		sys.exit(0)
 
 	args, _ = parser.parse_known_args()
 	return args
