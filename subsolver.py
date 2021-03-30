@@ -1,7 +1,7 @@
 """A-Folio DPDB Solver
 
 Usage:
-	./subsolver.py (-p | --problem) <task> (-f | --file) <file> (-fo | --format) <fileformat> [-a <additional_parameter>]
+	./subsolver.py -p <task> -f <file> -fo <fileformat> [-a <additional_parameter>]
 	./subsolver.py --formats
 	./subsolver.py --problems
 	./subsolver.py (-h | --help)
