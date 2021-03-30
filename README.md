@@ -4,7 +4,7 @@ Execute the [build.sh](./build.sh) script:
 ```
 $ bash build.sh
 ```
-The above script (among other things) installs **conda**. You will have to scroll down the TOS, then type `yes` to agree to them and accept the default install directory.
+The above script (among other things) installs **conda**. You will have to scroll down the TOS, then type `yes` to agree to them and accept the default install directory. When asked if you wish the installer to initialize Miniconda3 by running conda init you can just press `ENTER` (default NO).
 
 ## Running
 
